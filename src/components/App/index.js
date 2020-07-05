@@ -19,20 +19,18 @@ const App = () => {
   const reducer = (state, action) => {
     // eslint-disable-next-line default-case
     switch (action.type) {
-      case 'DISPLAY_MESSAGE': {
-        return { ...state, message: action.payload };
-      }
       case 'UPDATE_QUERY': {
         return { ...state, query: action.payload };
       }
       case 'FETCH_REPOS': {
         return { ...state, loading: true };
       }
-      case 'UPDATE_REPOS': {
+      case 'REPOS_RECEIVED': {
         return {
           ...state,
-          repos: cleanRepos(action.payload),
+          repos: cleanRepos(action.payload.repos),
           loading: false,
+          message: action.payload.message,
         };
       }
     }
@@ -49,8 +47,13 @@ const App = () => {
     axios
       .get(GITHUB_API_URL + state.query)
       .then((response) => {
-        dispatch({ type: 'UPDATE_REPOS', payload: response.data.items });
-        dispatch({ type: 'DISPLAY_MESSAGE', payload: response.data.total_count });
+        dispatch({
+          type: 'REPOS_RECEIVED',
+          payload: {
+            repos: response.data.items,
+            message: response.data.total_count,
+          },
+        });
       });
   };
 
