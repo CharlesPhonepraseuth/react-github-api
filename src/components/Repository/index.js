@@ -1,6 +1,6 @@
+// == Import npm
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { Card, Image } from 'semantic-ui-react';
 
 const C = ({ image, title, orga, description }) => {

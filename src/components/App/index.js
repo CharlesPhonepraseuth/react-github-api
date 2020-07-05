@@ -18,12 +18,14 @@ const DEFAULT_QUERY = 'javascript';
 const App = () => {
   const [repos, setRepos] = useState([]);
   const [query, setQuery] = useState(DEFAULT_QUERY);
+  const [loading, setLoading] = useState(false);
 
   const fetchRepos = () => {
     axios
       .get(GITHUB_API_URL + query)
       .then((response) => {
         setRepos(cleanRepos(response.data.items));
+        setLoading(false);
       });
   };
 
@@ -33,6 +35,7 @@ const App = () => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
+    setLoading(true);
     fetchRepos();
   };
 
@@ -42,11 +45,15 @@ const App = () => {
     <div className="app">
       <Header logo={githubLogo} />
       <SearchBar
+        loading={loading}
         value={query}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-      <Results results={repos} />
+      <Results
+        loading={loading}
+        results={repos}
+      />
     </div>
   );
 };
