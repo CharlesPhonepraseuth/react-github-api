@@ -17,15 +17,21 @@ const DEFAULT_QUERY = 'javascript';
 // == Composant
 const App = () => {
   const [query, setQuery] = useState(DEFAULT_QUERY);
-  const [loading, setLoading] = useState(false);
 
   const reducer = (state, action) => {
     // eslint-disable-next-line default-case
     switch (action.type) {
+      case 'FETCH_REPOS': {
+        return {
+          ...state,
+          loading: true,
+        };
+      }
       case 'UPDATE_REPOS': {
         return {
           ...state,
           repos: cleanRepos(action.payload),
+          loading: false,
         };
       }
     }
@@ -33,6 +39,7 @@ const App = () => {
 
   const [state, dispatch] = useReducer(reducer, {
     repos: [],
+    loading: false,
   });
 
   const fetchRepos = () => {
@@ -49,7 +56,7 @@ const App = () => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    setLoading(true);
+    dispatch({ type: 'FETCH_REPOS' });
     fetchRepos();
   };
 
@@ -59,13 +66,13 @@ const App = () => {
     <div className="app">
       <Header logo={githubLogo} />
       <SearchBar
-        loading={loading}
+        loading={state.loading}
         value={query}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
       <Results
-        loading={loading}
+        loading={state.loading}
         results={state.repos}
       />
     </div>
