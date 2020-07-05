@@ -51,7 +51,7 @@ const App = () => {
           type: 'REPOS_RECEIVED',
           payload: {
             repos: response.data.items,
-            message: response.data.total_count,
+            message: response.data.total_count.toString(),
           },
         });
       });
