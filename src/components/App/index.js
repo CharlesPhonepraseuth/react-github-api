@@ -1,5 +1,6 @@
 // == Import npm
-import React from 'react';
+import React, {useState, useEffect } from 'react';
+import axios from 'axios';
 
 // == Import
 import './styles.css';
@@ -7,13 +8,52 @@ import Header from 'src/components/Header';
 import SearchBar from 'src/components/SearchBar';
 import Results from 'src/components/Results';
 
+import githubLogo from 'src/assets/images/logo-github.png';
+import { cleanRepos } from 'src/utils/api';
+
+const GITHUB_API_URL = 'https://api.github.com/search/repositories?q=';
+const DEFAULT_QUERY = 'javascript';
+
 // == Composant
 const App = () => {
+  const [repos, setRepos] = useState([]);
+  const [query, setQuery] = useState(DEFAULT_QUERY);
+  const [loading, setLoading] = useState(false);
+
+  const fetchRepos = () => {
+    axios
+      .get(GITHUB_API_URL + query)
+      .then((response) => {
+        setRepos(cleanRepos(response.data.items));
+        setLoading(false);
+      });
+  };
+
+  const handleChange = (evt) => {
+    setQuery(evt.target.value);
+  };
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    setLoading(true);
+    fetchRepos();
+  };
+
+  useEffect(fetchRepos, []);
+
   return (
     <div className="app">
-      <Header />
-      <SearchBar />
-      <Results />
+      <Header logo={githubLogo} />
+      <SearchBar
+        loading={loading}
+        value={query}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
+      <Results
+        loading={loading}
+        results={repos}
+      />
     </div>
   );
 };
