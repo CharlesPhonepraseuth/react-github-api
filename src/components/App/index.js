@@ -1,5 +1,5 @@
 // == Import npm
-import React, {useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
 
 // == Import
@@ -16,16 +16,30 @@ const DEFAULT_QUERY = 'javascript';
 
 // == Composant
 const App = () => {
-  const [repos, setRepos] = useState([]);
   const [query, setQuery] = useState(DEFAULT_QUERY);
   const [loading, setLoading] = useState(false);
+
+  const reducer = (state, action) => {
+    // eslint-disable-next-line default-case
+    switch (action.type) {
+      case 'UPDATE_REPOS': {
+        return {
+          ...state,
+          repos: cleanRepos(action.payload),
+        };
+      }
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, {
+    repos: [],
+  });
 
   const fetchRepos = () => {
     axios
       .get(GITHUB_API_URL + query)
       .then((response) => {
-        setRepos(cleanRepos(response.data.items));
-        setLoading(false);
+        dispatch({ type: 'UPDATE_REPOS', payload: response.data.items });
       });
   };
 
@@ -52,7 +66,7 @@ const App = () => {
       />
       <Results
         loading={loading}
-        results={repos}
+        results={state.repos}
       />
     </div>
   );
