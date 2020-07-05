@@ -8,6 +8,7 @@ import SearchBar from 'src/components/SearchBar';
 import Results from 'src/components/Results';
 
 import githubLogo from 'src/assets/images/logo-github.png';
+import fakeData from 'src/data/repos';
 
 // == Composant
 const App = () => {
@@ -15,7 +16,7 @@ const App = () => {
     <div className="app">
       <Header logo={githubLogo} />
       <SearchBar />
-      <Results />
+      <Results results={fakeData.items} />
     </div>
   );
 };
