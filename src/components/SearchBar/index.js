@@ -3,7 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Segment, Input as SemanticUiInput } from 'semantic-ui-react';
 
-const C = ({ loading, value, handleChange, handleSubmit }) => {
+const C = ({
+  loading,
+  value,
+  handleChange,
+  handleSubmit,
+  message,
+}) => {
   return (
     <Segment>
       <Form onSubmit={handleSubmit}>
@@ -19,6 +25,7 @@ const C = ({ loading, value, handleChange, handleSubmit }) => {
           />
         </Form.Field>
       </Form>
+      <Segment>{message} repositories trouvés !</Segment>
     </Segment>
   );
 };
@@ -28,6 +35,7 @@ C.propTypes = {
   value: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  message: PropTypes.string.isRequired,
 };
 
 export default C;

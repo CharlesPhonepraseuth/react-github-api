@@ -1,5 +1,5 @@
 // == Import npm
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import axios from 'axios';
 
 // == Import
@@ -19,17 +19,14 @@ const App = () => {
   const reducer = (state, action) => {
     // eslint-disable-next-line default-case
     switch (action.type) {
+      case 'DISPLAY_MESSAGE': {
+        return { ...state, message: action.payload };
+      }
       case 'UPDATE_QUERY': {
-        return {
-          ...state,
-          query: action.payload,
-        };
+        return { ...state, query: action.payload };
       }
       case 'FETCH_REPOS': {
-        return {
-          ...state,
-          loading: true,
-        };
+        return { ...state, loading: true };
       }
       case 'UPDATE_REPOS': {
         return {
@@ -45,6 +42,7 @@ const App = () => {
     repos: [],
     loading: false,
     query: DEFAULT_QUERY,
+    message: '',
   });
 
   const fetchRepos = () => {
@@ -52,6 +50,7 @@ const App = () => {
       .get(GITHUB_API_URL + state.query)
       .then((response) => {
         dispatch({ type: 'UPDATE_REPOS', payload: response.data.items });
+        dispatch({ type: 'DISPLAY_MESSAGE', payload: response.data.total_count });
       });
   };
 
@@ -75,6 +74,7 @@ const App = () => {
         value={state.query}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
+        message={state.message}
       />
       <Results
         loading={state.loading}
