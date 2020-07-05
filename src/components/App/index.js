@@ -12,11 +12,22 @@ import fakeData from 'src/data/repos';
 
 // == Composant
 const App = () => {
+  const cleanData = fakeData.items.map((repo) => {
+    return {
+      id: repo.id,
+      image: repo.owner.avatar_url,
+      title: repo.name,
+      orga: repo.owner.login,
+      description: repo.description || 'No description provided...',
+      private: repo.private,
+    };
+  });
+
   return (
     <div className="app">
       <Header logo={githubLogo} />
       <SearchBar value="javascript" handleChange={() => {}} />
-      <Results results={fakeData.items} />
+      <Results results={cleanData} />
     </div>
   );
 };
