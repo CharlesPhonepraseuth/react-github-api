@@ -1,5 +1,6 @@
 // == Import npm
-import React from 'react';
+import React, {useState, useEffect } from 'react';
+import axios from 'axios';
 
 // == Import
 import './styles.css';
@@ -8,26 +9,30 @@ import SearchBar from 'src/components/SearchBar';
 import Results from 'src/components/Results';
 
 import githubLogo from 'src/assets/images/logo-github.png';
-import fakeData from 'src/data/repos';
+import { cleanRepos } from 'src/utils/api';
+
+const GITHUB_API_URL = 'https://api.github.com/search/repositories?q=';
+const DEFAULT_QUERY = 'javascript';
 
 // == Composant
 const App = () => {
-  const cleanData = fakeData.items.map((repo) => {
-    return {
-      id: repo.id,
-      image: repo.owner.avatar_url,
-      title: repo.name,
-      orga: repo.owner.login,
-      description: repo.description || 'No description provided...',
-      private: repo.private,
-    };
-  });
+  const [repos, setRepos] = useState([]);
+
+  const fetchRepos = () => {
+    axios
+      .get(GITHUB_API_URL + DEFAULT_QUERY)
+      .then((response) => {
+        setRepos(cleanRepos(response.data.items));
+      });
+  };
+
+  useEffect(fetchRepos, []);
 
   return (
     <div className="app">
       <Header logo={githubLogo} />
       <SearchBar value="javascript" handleChange={() => {}} />
-      <Results results={cleanData} />
+      <Results results={repos} />
     </div>
   );
 };
