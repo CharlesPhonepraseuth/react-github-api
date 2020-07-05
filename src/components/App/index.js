@@ -16,11 +16,15 @@ const DEFAULT_QUERY = 'javascript';
 
 // == Composant
 const App = () => {
-  const [query, setQuery] = useState(DEFAULT_QUERY);
-
   const reducer = (state, action) => {
     // eslint-disable-next-line default-case
     switch (action.type) {
+      case 'UPDATE_QUERY': {
+        return {
+          ...state,
+          query: action.payload,
+        };
+      }
       case 'FETCH_REPOS': {
         return {
           ...state,
@@ -40,18 +44,19 @@ const App = () => {
   const [state, dispatch] = useReducer(reducer, {
     repos: [],
     loading: false,
+    query: DEFAULT_QUERY,
   });
 
   const fetchRepos = () => {
     axios
-      .get(GITHUB_API_URL + query)
+      .get(GITHUB_API_URL + state.query)
       .then((response) => {
         dispatch({ type: 'UPDATE_REPOS', payload: response.data.items });
       });
   };
 
   const handleChange = (evt) => {
-    setQuery(evt.target.value);
+    dispatch({ type: 'UPDATE_QUERY', payload: evt.target.value });
   };
 
   const handleSubmit = (evt) => {
@@ -67,7 +72,7 @@ const App = () => {
       <Header logo={githubLogo} />
       <SearchBar
         loading={state.loading}
-        value={query}
+        value={state.query}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
