@@ -1,5 +1,5 @@
 // == Import npm
-import React, {useState, useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import axios from 'axios';
 
 // == Import
@@ -16,26 +16,54 @@ const DEFAULT_QUERY = 'javascript';
 
 // == Composant
 const App = () => {
-  const [repos, setRepos] = useState([]);
-  const [query, setQuery] = useState(DEFAULT_QUERY);
-  const [loading, setLoading] = useState(false);
+  const reducer = (state, action) => {
+    // eslint-disable-next-line default-case
+    switch (action.type) {
+      case 'UPDATE_QUERY': {
+        return { ...state, query: action.payload };
+      }
+      case 'FETCH_REPOS': {
+        return { ...state, loading: true };
+      }
+      case 'REPOS_RECEIVED': {
+        return {
+          ...state,
+          repos: cleanRepos(action.payload.repos),
+          loading: false,
+          message: action.payload.message,
+        };
+      }
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, {
+    repos: [],
+    loading: false,
+    query: DEFAULT_QUERY,
+    message: '',
+  });
 
   const fetchRepos = () => {
     axios
-      .get(GITHUB_API_URL + query)
+      .get(GITHUB_API_URL + state.query)
       .then((response) => {
-        setRepos(cleanRepos(response.data.items));
-        setLoading(false);
+        dispatch({
+          type: 'REPOS_RECEIVED',
+          payload: {
+            repos: response.data.items,
+            message: response.data.total_count,
+          },
+        });
       });
   };
 
   const handleChange = (evt) => {
-    setQuery(evt.target.value);
+    dispatch({ type: 'UPDATE_QUERY', payload: evt.target.value });
   };
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    setLoading(true);
+    dispatch({ type: 'FETCH_REPOS' });
     fetchRepos();
   };
 
@@ -45,14 +73,15 @@ const App = () => {
     <div className="app">
       <Header logo={githubLogo} />
       <SearchBar
-        loading={loading}
-        value={query}
+        loading={state.loading}
+        value={state.query}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
+        message={state.message}
       />
       <Results
-        loading={loading}
-        results={repos}
+        loading={state.loading}
+        results={state.repos}
       />
     </div>
   );
