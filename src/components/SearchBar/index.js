@@ -3,10 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Segment, Input as SemanticUiInput } from 'semantic-ui-react';
 
-const C = ({ value, handleChange }) => {
+const C = ({ value, handleChange, handleSubmit }) => {
   return (
     <Segment>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <Form.Field>
           <SemanticUiInput
             icon="search"
@@ -25,6 +25,7 @@ const C = ({ value, handleChange }) => {
 C.propTypes = {
   value: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 export default C;

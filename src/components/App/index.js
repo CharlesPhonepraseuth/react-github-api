@@ -17,13 +17,23 @@ const DEFAULT_QUERY = 'javascript';
 // == Composant
 const App = () => {
   const [repos, setRepos] = useState([]);
+  const [query, setQuery] = useState(DEFAULT_QUERY);
 
   const fetchRepos = () => {
     axios
-      .get(GITHUB_API_URL + DEFAULT_QUERY)
+      .get(GITHUB_API_URL + query)
       .then((response) => {
         setRepos(cleanRepos(response.data.items));
       });
+  };
+
+  const handleChange = (evt) => {
+    setQuery(evt.target.value);
+  };
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    fetchRepos();
   };
 
   useEffect(fetchRepos, []);
@@ -31,7 +41,11 @@ const App = () => {
   return (
     <div className="app">
       <Header logo={githubLogo} />
-      <SearchBar value="javascript" handleChange={() => {}} />
+      <SearchBar
+        value={query}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
       <Results results={repos} />
     </div>
   );
