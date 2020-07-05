@@ -15,7 +15,7 @@ const App = () => {
   return (
     <div className="app">
       <Header logo={githubLogo} />
-      <SearchBar />
+      <SearchBar value="javascript" handleChange={() => {}} />
       <Results results={fakeData.items} />
     </div>
   );
