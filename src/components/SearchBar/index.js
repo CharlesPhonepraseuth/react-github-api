@@ -25,7 +25,11 @@ const C = ({
           />
         </Form.Field>
       </Form>
-      <Segment>{message} repositories trouvés !</Segment>
+      <Segment
+        loading={loading}
+      >
+        {message} repositories trouvés !
+      </Segment>
     </Segment>
   );
 };

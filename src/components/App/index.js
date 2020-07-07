@@ -1,5 +1,6 @@
 // == Import npm
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
 // == Import
@@ -9,79 +10,49 @@ import SearchBar from 'src/components/SearchBar';
 import Results from 'src/components/Results';
 
 import githubLogo from 'src/assets/images/logo-github.png';
-import { cleanRepos } from 'src/utils/api';
-
-const GITHUB_API_URL = 'https://api.github.com/search/repositories?q=';
-const DEFAULT_QUERY = 'javascript';
+import { GITHUB_API_URL } from 'src/utils/api';
+import { reposReceived, updateQuery, fetchRepos } from 'src/store/actions';
 
 // == Composant
 const App = () => {
-  const reducer = (state, action) => {
-    // eslint-disable-next-line default-case
-    switch (action.type) {
-      case 'UPDATE_QUERY': {
-        return { ...state, query: action.payload };
-      }
-      case 'FETCH_REPOS': {
-        return { ...state, loading: true };
-      }
-      case 'REPOS_RECEIVED': {
-        return {
-          ...state,
-          repos: cleanRepos(action.payload.repos),
-          loading: false,
-          message: action.payload.message,
-        };
-      }
-    }
-  };
+  const dispatch = useDispatch();
+  const query = useSelector((state) => state.query);
+  const loading = useSelector((state) => state.loading);
+  const message = useSelector((state) => state.message);
+  const repos = useSelector((state) => state.repos);
 
-  const [state, dispatch] = useReducer(reducer, {
-    repos: [],
-    loading: false,
-    query: DEFAULT_QUERY,
-    message: '',
-  });
-
-  const fetchRepos = () => {
-    axios
-      .get(GITHUB_API_URL + state.query)
+  const fetchRepository = () => {
+    axios.get(GITHUB_API_URL + query)
       .then((response) => {
-        dispatch({
-          type: 'REPOS_RECEIVED',
-          payload: {
-            repos: response.data.items,
-            message: response.data.total_count.toString(),
-          },
-        });
+        dispatch(reposReceived(response.data.items, response.data.total_count.toString()));
       });
   };
 
   const handleChange = (evt) => {
-    dispatch({ type: 'UPDATE_QUERY', payload: evt.target.value });
+    dispatch(updateQuery(evt.target.value));
   };
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    dispatch({ type: 'FETCH_REPOS' });
-    fetchRepos();
+    dispatch(fetchRepos());
+    fetchRepository();
   };
 
-  useEffect(fetchRepos, []);
+  useEffect(fetchRepository, []);
 
   return (
     <div className="app">
       <Header logo={githubLogo} />
       <SearchBar
-        loading={state.loading}
-        value={state.query}
+        loading={loading}
+        value={query}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        message={state.message}
+        message={message}
       />
       <Results
-        loading={state.loading}
-        results={state.repos}
+        loading={loading}
+        results={repos}
       />
     </div>
   );
