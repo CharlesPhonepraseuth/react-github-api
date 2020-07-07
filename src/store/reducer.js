@@ -19,9 +19,9 @@ export default (state = initialState, action = {}) => {
     case actions.REPOS_RECEIVED: {
       return {
         ...state,
-        repos: cleanRepos(action.payload.repos),
+        repos: cleanRepos(action.repos),
         loading: false,
-        message: action.payload.message,
+        message: action.message,
       };
     }
     default: {

@@ -11,7 +11,7 @@ import Results from 'src/components/Results';
 
 import githubLogo from 'src/assets/images/logo-github.png';
 import { GITHUB_API_URL } from 'src/utils/api';
-import { actions } from 'src/store/actions';
+import { reposReceived, updateQuery, fetchRepos } from 'src/store/actions';
 
 // == Composant
 const App = () => {
@@ -21,30 +21,24 @@ const App = () => {
   const message = useSelector((state) => state.message);
   const repos = useSelector((state) => state.repos);
 
-  const fetchRepos = () => {
+  const fetchRepository = () => {
     axios.get(GITHUB_API_URL + query)
       .then((response) => {
-        dispatch({
-          type: actions.REPOS_RECEIVED,
-          payload: {
-            repos: response.data.items,
-            message: response.data.total_count.toString(),
-          },
-        });
+        dispatch(reposReceived(response.data.items, response.data.total_count.toString()));
       });
   };
 
   const handleChange = (evt) => {
-    dispatch({ type: actions.UPDATE_QUERY, payload: evt.target.value });
+    dispatch(updateQuery(evt.target.value));
   };
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    dispatch({ type: actions.FETCH_REPOS });
-    fetchRepos();
+    dispatch(fetchRepos());
+    fetchRepository();
   };
 
-  useEffect(fetchRepos, []);
+  useEffect(fetchRepository, []);
 
   return (
     <div className="app">
