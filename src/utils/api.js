@@ -12,3 +12,6 @@ export const cleanRepos = (list) => {
     };
   });
 };
+
+export const GITHUB_API_URL = 'https://api.github.com/search/repositories?q=';
+export const DEFAULT_QUERY = 'javascript';
