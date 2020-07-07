@@ -11,6 +11,7 @@ import Results from 'src/components/Results';
 
 import githubLogo from 'src/assets/images/logo-github.png';
 import { GITHUB_API_URL } from 'src/utils/api';
+import { actions } from 'src/store/actions';
 
 // == Composant
 const App = () => {
@@ -24,7 +25,7 @@ const App = () => {
     axios.get(GITHUB_API_URL + query)
       .then((response) => {
         dispatch({
-          type: 'REPOS_RECEIVED',
+          type: actions.REPOS_RECEIVED,
           payload: {
             repos: response.data.items,
             message: response.data.total_count.toString(),
@@ -34,12 +35,12 @@ const App = () => {
   };
 
   const handleChange = (evt) => {
-    dispatch({ type: 'UPDATE_QUERY', payload: evt.target.value });
+    dispatch({ type: actions.UPDATE_QUERY, payload: evt.target.value });
   };
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    dispatch({ type: 'FETCH_REPOS' });
+    dispatch({ type: actions.FETCH_REPOS });
     fetchRepos();
   };
 

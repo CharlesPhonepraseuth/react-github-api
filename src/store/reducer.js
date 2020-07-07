@@ -1,4 +1,5 @@
 import { cleanRepos, DEFAULT_QUERY } from 'src/utils/api';
+import { actions } from './actions';
 
 const initialState = {
   repos: [],
@@ -9,13 +10,13 @@ const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
-    case 'UPDATE_QUERY': {
+    case actions.UPDATE_QUERY: {
       return { ...state, query: action.payload };
     }
-    case 'FETCH_REPOS': {
+    case actions.FETCH_REPOS: {
       return { ...state, loading: true };
     }
-    case 'REPOS_RECEIVED': {
+    case actions.REPOS_RECEIVED: {
       return {
         ...state,
         repos: cleanRepos(action.payload.repos),
